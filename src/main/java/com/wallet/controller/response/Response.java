@@ -1,5 +1,6 @@
 package com.wallet.controller.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -12,5 +13,5 @@ import lombok.Setter;
 public class Response<T> {
 
 	private T data;
-	private List<String> errors;
+	private List<String> errors = new ArrayList<String>();
 }

@@ -15,6 +15,7 @@ import com.wallet.controller.dto.UserDTO;
 import com.wallet.controller.response.Response;
 import com.wallet.entities.User;
 import com.wallet.service.UserService;
+import com.wallet.util.BCrypt;
 
 @RestController
 @RequestMapping("user")
@@ -28,6 +29,11 @@ public class UserController {
 		
 		Response<UserDTO> response = new Response<UserDTO>();
 		
+		if (result.hasErrors()) {
+			result.getAllErrors().forEach(e -> response.getErrors().add(e.getDefaultMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+				
 		User user = service.save(this.convertDtoToEntity(dto));
 		
 		response.setData(this.convertEntityToDto(user));
@@ -39,15 +45,15 @@ public class UserController {
 		User u = new User();
 		u.setEmail(dto.getEmail());
 		u.setName(dto.getName());
-		u.setPassword(dto.getPassword());
+		u.setPassword(BCrypt.getHash(dto.getPassword()));
 		return u;
 	}
 	
 	private UserDTO convertEntityToDto(User user) {
 		UserDTO dto = new UserDTO();
+		dto.setId(user.getId());
 		dto.setEmail(user.getEmail());
 		dto.setName(user.getName());
-		dto.setPassword(user.getPassword());
 		return dto;
 	}
 }
